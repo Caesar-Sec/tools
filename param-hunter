@@ -1,0 +1,38 @@
+#!/bin/bash
+
+mkdir params
+
+#pull data from wayback machine which contain potentially vulnerable parameters
+
+#open redirects
+cat $1 | grep "dest=" | tee -a params/redirects.txt
+cat $1 | grep "continue=" | tee -a params/redirects.txt
+cat $1 | grep "redirect=" | tee -a params/redirects.txt
+cat $1 | grep "url=" | tee -a params/redirects.txt
+cat $1 | grep "uri=" | tee -a params/redirects.txt
+cat $1 | grep "window=" | tee -a params/redirects.txt
+cat $1 | grep "next=" | tee -a params/redirects.txt
+
+#LFI
+cat $1 | grep "file=" | tee -a params/LFI.txt
+cat $1 | grep "location=" | tee -a params/LFI.txt
+cat $1 | grep "locale=" | tee -a params/LFI.txt
+cat $1 | grep "path=" | tee -a params/LFI.txt
+cat $1 | grep "display=" | tee -a params/LFI.txt
+cat $1 | grep "load=" | tee -a params/LFI.txt
+cat $1 | grep "read=" | tee -a params/LFI.txt
+cat $1 | grep "retrieve=" | tee -a params/LFI.txt
+
+#RFI
+cat $1 | grep "file=" | tee -a params/RFI.txt
+cat $1 | grep "folder=" | tee -a params/RFI.txt
+cat $1 | grep "style=" | tee -a params/RFI.txt
+cat $1 | grep "path=" | tee -a params/RFI.txt
+cat $1 | grep "template=" | tee -a params/RFI.txt
+cat $1 | grep "php_path=" | tee -a params/RFI.txt
+cat $1 | grep "doc=" | tee -a params/RFI.txt
+cat $1 | grep "document=" | tee -a params/RFI.txt
+cat $1 | grep "root=" | tee -a params/RFI.txt
+cat $1 | grep "pg=" | tee -a params/RFI.txt
+cat $1 | grep "pdf=" | tee -a params/RFI.txt
+
