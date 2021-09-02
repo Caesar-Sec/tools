@@ -32,26 +32,43 @@ INPUTS = list()
 #     return
 
 
+# Create a sturcture for storing the attribute names
+input_attributes = set()
+
+
 r = requests.get(URL)
 soup = bs(r.text, "html.parser")
-pattern = "(\<input.+\>)"
 
-comments = list()
-inputs = list()
+input_tags = soup.find_all('input')
+for i in input_tags:
+    try:
+        input_attributes.add(i['id'])
+    except:
+        print("No ID found in tag")
 
-for input_tags in soup.find_all('input'):
-    # Strip out the parameters
-    for value in input_tags:
-        get_val = value.get('id')
-        print(get_val)
-    # for parameter in input_tags:
-    #     print(parameter)
-    
-    
-    # inputs.append(input_tags)
-    # print(input_tags)
+    try:
+        input_attributes.add(i['name'])
+    except:
+        print("No ID found in tag")
 
+print(input_attributes)
 
+########
+### POC CODE
+########
 
-# comments = re.findall(pattern, soup.text)
-# print(soup)
+# req = requests.get(URL)
+# soupp = bs(req.text, "html.parser")
+
+# comments = list()
+# inputs = list()
+
+# tags = soupp.find_all('input')
+# print(tags)
+
+# for input_tags in tags:
+#     print("Searching")
+#     try:
+#         print(input_tags['id'])
+#     except:
+#         print("No ID attribute found")
