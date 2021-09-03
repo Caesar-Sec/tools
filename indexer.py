@@ -1,21 +1,13 @@
 #!/usr/bin/python3
 
-# ToDo
-## take a list of domains
-## request the index page of each domain
-## use findall to gather all variables in that index page
-### Optionally use the findall to gahter all comments on the page
-
+import sys
 import requests
-import re
 from bs4 import BeautifulSoup as bs
+from bs4 import Comment
 
-URL = "https://www.hackerone.com"
-COMMENTS = list()
-INPUTS = list()
 
-# def get_index(URL):
-#     webpage = requests.get(URL)
+# def get_index(url):
+#     webpage = requests.get(url)
 #     soup = bs(webpage.text, "html.parser")
 #     return soup.text
 
@@ -31,44 +23,55 @@ INPUTS = list()
 #         COMMENTS.append(comment_tags)
 #     return
 
+# Take input of a url
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('Usage: \npython3 indexer.py <domains-name>')
+        sys.exit()
+    url = sys.argv[1]
 
-# Create a sturcture for storing the attribute names
+
+# Create a sturcture for storing the attribute names and comments
 input_attributes = set()
+comments = set()
 
 
-r = requests.get(URL)
+r = requests.get(url)
 soup = bs(r.text, "html.parser")
 
+# Gather all attributes from input tags with id or name
 input_tags = soup.find_all('input')
 for i in input_tags:
     try:
         input_attributes.add(i['id'])
     except:
-        print("No ID found in tag")
+        pass
 
     try:
         input_attributes.add(i['name'])
     except:
-        print("No ID found in tag")
+        pass
 
-print(input_attributes)
 
-########
-### POC CODE
-########
 
-# req = requests.get(URL)
-# soupp = bs(req.text, "html.parser")
+# Gather any comments from the page
+soup2 = bs(r.text, 'html.parser')
+comment = soup2.find_all(string=lambda text: isinstance(text, Comment))
+for i in comment:
+    comments.add(i)
+    
 
-# comments = list()
-# inputs = list()
+# Open File Handler and write findings to an output file
+f_hand = open('indexer_output.txt', 'w')
+f_hand.write("Input tag Attributes\n")
+f_hand.write("------------------------------------------\n")
+for i in input_attributes:
+    f_hand.write(i + '\n')
 
-# tags = soupp.find_all('input')
-# print(tags)
+f_hand.write("\n\nHTML Comments\n")
+f_hand.write("------------------------------------------\n")
+for c in comments:
+    f_hand.write("New Comment Section:\n")
+    f_hand.write(c + '\n\n\n')
 
-# for input_tags in tags:
-#     print("Searching")
-#     try:
-#         print(input_tags['id'])
-#     except:
-#         print("No ID attribute found")
+f_hand.close()
