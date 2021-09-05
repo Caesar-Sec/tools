@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from enum import unique
 import sys
 import requests
 import re
@@ -21,6 +20,7 @@ def indexes(host):
     results.pop(0)  # remove the first item ['timestamp', 'original']
     return results
 
+
 def get_data(snapshot):
     print("Staring New Page")
     url = 'https://web.archive.org/web/{0}/{1}'.format(snapshot[0], snapshot[1]) 
@@ -29,27 +29,25 @@ def get_data(snapshot):
 
     # get input data
     input_tags = soup.find_all('input')
-    input_attrs = list()
     for i in input_tags:
         try:
-            input_attrs.add(i['id'])
+            input_attributes.add(i['id'])
         except:
             pass
         try:
-            input_attrs.add(i['name'])
+            input_attributes.add(i['name'])
         except:
             pass
 
     # get js data
     js_paths = soup.find_all('script')
-    js_files = list()
     for i in js_paths:
         # add an if to check if the url is relative or absolute and append the host
         try:
-            js_files.add(i['src'])
+            js_attributes.add(i['src'])
         except:
             pass
-    return input_attrs, js_files
+    return
         
 
 
@@ -68,7 +66,9 @@ if __name__ == '__main__':
     
     # get all input unique attributes
     print("Staring Execution")
-    input_attributes, js_attributes = zip(*pool.map(get_data, snapshots[1:5]))
+    input_attributes = list()
+    js_attributes = list()
+    pool.map(get_data, snapshots[1:5])
     uniqueAttributes = set()
     for i in input_attributes:
         uniqueAttributes.update(i)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     # Write to output files
     print(type(uniqueAttributes))
     print(type(js_attributes))
-    print(js_attributes)
+    print(uniqueAttributes)
     print(js_attributes)
     # f_hand = open('waybackindexer.txt', 'w')
     # for i in uniqueAttributes:
