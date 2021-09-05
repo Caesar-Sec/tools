@@ -47,7 +47,7 @@ def get_data(snapshot):
             js_attributes.add(i['src'])
         except:
             pass
-    return
+    return input_attributes, js_attributes
         
 
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     print("Staring Execution")
     input_attributes = list()
     js_attributes = list()
-    pool.map(get_data, snapshots[1:5])
+    input_attributes, js_attributes = pool.map(get_data, snapshots[1:5])
     uniqueAttributes = set()
     for i in input_attributes:
         uniqueAttributes.update(i)

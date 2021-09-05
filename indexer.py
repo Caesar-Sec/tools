@@ -6,23 +6,6 @@ from bs4 import BeautifulSoup as bs
 from bs4 import Comment
 
 
-# def get_index(url):
-#     webpage = requests.get(url)
-#     soup = bs(webpage.text, "html.parser")
-#     return soup.text
-
-
-# def get_input_tags(page):
-#     for input_tags in page.find_all('input'):
-#         INPUTS.append(input_tags)
-#     return    
-
-
-# def get_comment_tags(page):
-#     for comment_tags in page.find_all(''):
-#         COMMENTS.append(comment_tags)
-#     return
-
 # Take input of a url
 if __name__ == '__main__':
     if len(sys.argv) < 2:
