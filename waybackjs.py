@@ -2,14 +2,9 @@
 
 import sys
 import requests
-import re
 from multiprocessing.dummy import Pool
 from bs4 import BeautifulSoup as bs
 
-# request all index pages from wayback machine
-# Gather all id and name attributes from any input tags
-# grab any comments
-# links to js files
 def indexes(host):
     r = requests.get('https://web.archive.org/cdx/search/cdx\
         ?url=%s&output=json&fl=timestamp,original&\
@@ -26,14 +21,6 @@ def get_data(snapshot):
     indexPage = requests.get(url).text
     soup = bs(indexPage, "html.parser")
 
-    # get input data
-    input_tags = soup.find_all('input')
-    for i in input_tags:
-        try:
-            append_input(INPUT_ATTRIBUTES, i)
-        except:
-            pass
-
     # get js data
     js_paths = soup.find_all('script')
     for i in js_paths:
@@ -43,13 +30,6 @@ def get_data(snapshot):
         except:
             pass
     return
-        
-
-def append_input(input_list, value):
-    input_list.append(value['id'])
-    input_list.append(value['name'])
-    return input_list
-
 
 def append_js(js_list, value):
     js_list.append(value['src'])
@@ -59,36 +39,26 @@ def cli_output(endpoints):
     for endpoint in endpoints:
         print(endpoint)
 
-
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print('Usage: \npython3 waybackindexer.py <domain-name>')
+        print("Usage: \n\t python3 waybackjs.py <domain-name>")
         sys.exit()
 
     host = sys.argv[1]
-    if "http" not in host:
+    if 'http' not in host:
         host = 'https://' + host
-
 
     snapshots = indexes(host)
     if len(snapshots) == 0:
         print("No Results Found")
         sys.exit()
     pool = Pool(4)
-    
-    # get all input unique attributes
-    print("Staring Execution")
-    INPUT_ATTRIBUTES = list()
+
+
     JS_ATTRIBUTES = list()
-    pool.map(get_data, snapshots[1:20])
+    pool.map(get_data, snapshots)
 
-    # move data into a set from the list
-    uniqueAttributes = set()
     uniqueJS = set()
-
-    for i in INPUT_ATTRIBUTES:
-        uniqueAttributes.add(i)
-
     for c in JS_ATTRIBUTES:
         if "archive.org" in c:
             pass
@@ -104,9 +74,3 @@ if __name__ == '__main__':
             uniqueJS.add(c)
 
     cli_output(uniqueJS)
-
-    # with open("input_vars.txt", 'a') as f_hand:
-    #     f_hand.write('\n'.join(uniqueAttributes))
-
-    # with open("js_wayback.txt", 'a') as f_hand:
-    #     f_hand.write('\n'.join(uniqueJS))
